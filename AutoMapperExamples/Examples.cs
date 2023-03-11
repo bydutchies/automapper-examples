@@ -21,8 +21,15 @@ internal class Examples
   public async Task RunAsync()
   {
     SimpleExample();
+    
     ListExample();
+    
     ExampleWithExtendedMapping();
+    
+    ExampleWithConditionalMapping();
+
+    BiDirectionalMappingExample();
+
     ExampleWithResolvers();
 
     Console.ReadKey();
@@ -76,7 +83,47 @@ internal class Examples
   }
 
   /// <summary>
-  /// Complex example using resolvers. See OrderMapping class.
+  /// An example with conditional mapping. AutoMapper allows adding conditions to properties 
+  /// that must be met before that property will be mapped. See PersonMapping class.
+  /// </summary>
+  private void ExampleWithConditionalMapping()
+  {
+    var person = GetPerson(16); // child
+
+    PersonDto result = _mapper.Map<Person, PersonDto>(person);
+
+    Console.WriteLine($"ExampleWithConditionalMapping first result: {result.CanVote}");
+
+    person = GetPerson(32); // adult
+    
+    result = _mapper.Map<Person, PersonDto>(person);
+
+    Console.WriteLine($"ExampleWithConditionalMapping second result: {result.CanVote}");
+  }
+
+  /// <summary>
+  /// An example with bi-directional mapping. AutoMapper allows reversed mapping. Once the reverse map is configured, 
+  /// we can map back from destination to source type. See ProductMapping class.
+  /// </summary>
+  private void BiDirectionalMappingExample()
+  {
+    var product = GetProduct();
+
+    ProductDto result = _mapper.Map<Product, ProductDto>(product);
+
+    Console.WriteLine($"BiDirectionalMappingExample first result: {result.Name}");
+    Console.WriteLine($"BiDirectionalMappingExample first result: {result.Description}");
+    Console.WriteLine($"BiDirectionalMappingExample first result: {result.Price}");
+
+    Product reversedResult = _mapper.Map<ProductDto, Product>(result);
+
+    Console.WriteLine($"BiDirectionalMappingExample first result: {reversedResult.Name}");
+    Console.WriteLine($"BiDirectionalMappingExample first result: {reversedResult.Description}");
+    Console.WriteLine($"BiDirectionalMappingExample first result: {reversedResult.Price}");
+  }
+
+  /// <summary>
+  /// Complex example using resolvers, parameters and dependency injection. See OrderMapping class.
   /// </summary>
   private void ExampleWithResolvers()
   {
@@ -136,6 +183,26 @@ private Address GetAddress()
       Address = GetAddress(),
       DeliveryAddress = GetDeliveryAddress(),
       Email = "example@test.com"
+    };
+  }
+
+  private Person GetPerson(int age)
+  {
+    return new Person
+    {
+      Name = "Wilco",
+      Gender = "male",
+      Age = age
+    };
+  }
+
+  private Product GetProduct()
+  {
+    return new Product
+    {
+      Name = "Iphone",
+      Description = "Best phone ever",
+      Price = 900
     };
   }
 
