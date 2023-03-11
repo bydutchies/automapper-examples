@@ -8,7 +8,6 @@ internal class PersonProfile : Profile
   public PersonProfile()
   {
     CreateMap<Person, PersonDto>()
-      //.ForMember(dest => dest.CanVote, opt => opt.Condition(src => src.Age > 18 ? true : false))
       .ForMember(dest => dest.CanVote, opt =>
       {
         opt.PreCondition(src => src.Age > 18);
